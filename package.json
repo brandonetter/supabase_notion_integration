@@ -1,0 +1,20 @@
+{
+  "name": "update_course_progress",
+  "version": "1.0.0",
+  "author": "Brandon Etter for JSM",
+  "description": "In-house integration to update course progress in Notion",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+  "license": "ISC",
+  "dependencies": {
+    "@notionhq/client": "^2.2.14",
+    "@supabase/supabase-js": "^2.39.7",
+    "dotenv": "^16.4.5",
+    "nodemon": "^3.1.0"
+  }
+}
