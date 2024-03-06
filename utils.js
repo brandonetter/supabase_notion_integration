@@ -46,30 +46,6 @@ export const findDatabaseItemByEmail = async (email) => {
   };
 
 export const generateProperties = (data) => {
-/*
-  ID: {
-          title: [
-            {
-              text: {
-                content: String(item.id),
-              },
-            },
-          ],
-        },
-        Completion: {
-          number: item.progress_percentage,
-        },
-        Course:{
-          select:{
-            name: item.course_name,
-          }
-
-        },
-        Email: {
-          email: item.user_email,
-        },
-      */
-
   return {
     ID: {
       title: [

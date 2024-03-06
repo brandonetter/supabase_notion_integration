@@ -56,8 +56,6 @@ const handleEvent = async (payload,eventType) => {
     case 'UPDATE': {
       const data = payload.new;
       const currentItem = await findDatabaseItemByID(String(data.id));
-
-      console.log(generateProperties(data));
       await notion.pages.update({
         page_id: currentItem.id,
         properties: generateProperties(data),
