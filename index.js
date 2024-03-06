@@ -25,32 +25,9 @@ const initialLoad = async () => {
     console.log('Error: ', error);
   }
   for (const item of data) {
-    console.log(item);
     await notion.pages.create({
       parent: { database_id: pageID },
-      properties: {
-        ID: {
-          title: [
-            {
-              text: {
-                content: String(item.id),
-              },
-            },
-          ],
-        },
-        Completion: {
-          number: item.progress_percentage,
-        },
-        Course:{
-          select:{
-            name: item.course_name,
-          }
-
-        },
-        Email: {
-          email: item.user_email,
-        },
-      },
+      properties: generateProperties(item),
     });
   }
 }
@@ -79,6 +56,8 @@ const handleEvent = async (payload,eventType) => {
     case 'UPDATE': {
       const data = payload.new;
       const currentItem = await findDatabaseItemByID(String(data.id));
+
+      console.log(generateProperties(data));
       await notion.pages.update({
         page_id: currentItem.id,
         properties: generateProperties(data),
