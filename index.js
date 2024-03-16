@@ -5,26 +5,26 @@ import { findDatabaseItemByID,generateProperties } from './utils.js';
 const pageID = process.env.NOTION_PAGE_ID;
 
 const initialLoad = async () => {
-  // on initial load, delete all items in the Notion database
-  // and then fetch all data from Supabase and insert into Notion
-  // this is to ensure that the Notion database is in sync with the Supabase database
-  // when the server starts
-  const currentItems = await notion.databases.query({
-    database_id: pageID,
-  });
-  for (const item of currentItems.results) {
-    await notion.pages.update({
-      page_id: item.id,
-      archived: true,
-    });
-  }
 
-  // Fetch data from Supabase
   const { data, error } = await supabase.from('user_progress').select('*');
   if (error) {
     console.log('Error: ', error);
   }
   for (const item of data) {
+    // For each item, check if it exists in the Notion database
+    // If it does, update it
+    // If it doesn't, insert it
+    const currentItem = await findDatabaseItemByID(String(item.id));
+    if (currentItem) {
+      console.log('Updating item: ', item.id);
+      await notion.pages.update({
+        page_id: currentItem.id,
+        properties: generateProperties(item),
+      });
+      continue;
+    }
+
+    console.log('Inserting item: ', item.id);
     await notion.pages.create({
       parent: { database_id: pageID },
       properties: generateProperties(item),
@@ -78,8 +78,12 @@ const main = async () => {
         schema: 'public',
       },
       async (payload) => {
-        const eventType = payload.eventType;
-        await handleEvent(payload,eventType);
+        try{
+          const eventType = payload.eventType;
+          await handleEvent(payload,eventType);
+        }catch(e){
+          console.log('Error: ', e);
+        }
       }
     )
     .subscribe();
